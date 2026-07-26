@@ -161,7 +161,7 @@
     "dotenv-cli": "^7.4.4",
     "eslint": "^9.39.2",
     "prisma": "^6.19.3",
-    "tsx": "^4.20.5",
+    "tsx": "^4.23.1",
     "typescript": "catalog:",
     "vitest": "^4.1.10"
   },

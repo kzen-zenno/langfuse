@@ -75,7 +75,7 @@
     "@vitest/coverage-v8": "^4.1.10",
     "eslint": "^9.39.2",
     "msw": "^2.6.5",
-    "tsx": "^4.20.5",
+    "tsx": "^4.23.1",
     "typescript": "catalog:",
     "vitest": "^4.1.10",
     "wait-for-expect": "^3.0.2"
