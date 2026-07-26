@@ -54,6 +54,7 @@ yarn-error.log*
 !.env.prod.example
 !.env.test.example
 !.env.dev-oci.example
+!.env.local.example
 
 # vercel
 .vercel
@@ -101,6 +102,7 @@ web/test-results/*
 
 # local config files
 *.local.*
+!.env.local.example
 
 # claude meta files
 .claude/tsc-cache

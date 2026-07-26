@@ -71,6 +71,7 @@ services:
 
   langfuse-web:
     image: docker.io/langfuse/langfuse:3
+    container_name: langfuse-web
     restart: always
     depends_on: *langfuse-depends-on
     ports:
@@ -166,6 +167,57 @@ services:
     volumes:
       - langfuse_postgres_data:/var/lib/postgresql/data
 
+  open-webui:
+    #image: ghcr.io/open-webui/open-webui:main
+    image: ghcr.io/open-webui/open-webui:v0.9.6 
+    container_name: open-webui
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    ports:
+      - "3001:8080"
+
+    environment:
+      OLLAMA_BASE_URL: http://172.17.0.1:11434
+      ENABLE_OTEL: "true"
+      OTEL_SERVICE_NAME: open-webui
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+
+    volumes:
+      - openwebui_data:/app/backend/data
+
+    restart: unless-stopped
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    command:
+      - "--config=/etc/otelcol/config.yaml"
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    volumes:
+      - ./otel-config.yaml:/etc/otelcol/config.yaml
+    restart: unless-stopped
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: litellm
+    environment:
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY} # CHANGEME
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY} # CHANGEME
+      LANGFUSE_HOST: http://langfuse-web:3000
+
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./litellm-config.yaml:/app/config.yaml
+    command:
+      - "--config"
+      - "/app/config.yaml"
+    restart: unless-stopped
+
 volumes:
   langfuse_postgres_data:
     driver: local
@@ -176,4 +228,6 @@ volumes:
   langfuse_minio_data:
     driver: local
   langfuse_redis_data:
+    driver: local
+  openwebui_data:
     driver: local
